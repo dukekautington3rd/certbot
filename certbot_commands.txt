@@ -1,0 +1,2 @@
+certbot certonly --manual -d *.wificus.info --email lonkaut@gmail.com --preferred-challenges=dns --agree-tos 
+certbot certonly --dns-google --dns-google-credentials /etc/letsencrypt/googlekey.json -d *.kaut.io --email lonkaut@gmail.com
