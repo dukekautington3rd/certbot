@@ -2,7 +2,7 @@
 exec 2>&1
 
 certbotcommand="certbot certonly --dns-google --dns-google-credentials /etc/letsencrypt/googlekey.json -d *.$DOMAIN --email $EMAIL --test-cert --work-dir $HOME/letsencryptlib  --logs-dir $HOME/letsencryptlogs --config-dir $HOME/letsencrypt --agree-tos -n"
-k8sapply="kubectl create secret tls $CERTNAME --dry-run=client --cert=$HOME/letsencrypt/live/$DOMAIN/fullchain.pem --key=$HOME/letsencrypt/live/$DOMAIN/privkey.pem -oyaml  | kubectl apply -f -"
+k8sapply="kubectl create secret tls $CERTNAME --dry-run=client --cert=$HOME/letsencrypt/live/$DOMAIN/fullchain.pem --key=$HOME/letsencrypt/live/$DOMAIN/privkey.pem -oyaml"
 RENEWBEFORE=`bc<<<"$RENEW_BEFORE_DAYS*86400"`
 
 if $TEST ; then
@@ -19,7 +19,7 @@ check_cert () {
 		# done	
 
 		echo "---===`date`===--- applying cert to K8s secret store"
-		until $k8sapply ; do
+		until $k8sapply | kubectl apply -f - ; do
 			echo "---===`date`===--- Something went wrong applying the cert. Trying tomorrow"
 			sleep 86400
 		done	
