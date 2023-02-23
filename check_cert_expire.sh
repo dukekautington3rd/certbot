@@ -10,18 +10,23 @@ if $TEST ; then
 fi
 
 check_cert () {
-	kubectl get secret -n revproxy $CERTNAME -o "jsonpath={.data['tls\.crt']}" | base64 -d | openssl x509 -checkend $RENEWBEFORE -noout 
+	kubectl get secret $CERTNAME -o "jsonpath={.data['tls\.crt']}" | base64 -d | openssl x509 -checkend $RENEWBEFORE -noout 
 	if [ $? -eq 1 ] ; then
 		echo "---===`date`===--- attempting to renewing now"
 		until $certbotcommand ; do
 			echo "---===`date`===--- Something went wrong renewing the cert. Trying tomorrow"
 			sleep 86400
 		done	
-		echo "---===`date`===--- attempting to renewing now"
+
+		echo "---===`date`===--- applying cert to K8s secret store"
 		until $k8sapply ; do
 			echo "---===`date`===--- Something went wrong applying the cert. Trying tomorrow"
 			sleep 86400
 		done	
+
+		EXPDATE=`kubectl get secret $CERTNAME -o "jsonpath={.data['tls\.crt']}" | base64 -d | openssl x509 -enddate -noout | awk -F= '{print $2}'`
+		kubectl annotate --overwrite=true secret $CERTNAME Expiration="`date -d "$EXPDATE"`"
+
 		return 0
 	else
 		echo "---===`date`===--- no renewal needed"
@@ -29,7 +34,7 @@ check_cert () {
 	fi
 }
 
-check_cert $certname
+check_cert
 exit $?
 
 # kubectl get secret letsencrypt-test -o "jsonpath={.data['tls\.crt']}" | base64 -d | openssl x509 -enddate -noout
