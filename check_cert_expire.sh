@@ -12,11 +12,11 @@ fi
 check_cert () {
 	kubectl get secret $CERTNAME -o "jsonpath={.data['tls\.crt']}" | base64 -d | openssl x509 -checkend $RENEWBEFORE -noout 
 	if [ $? -eq 1 ] ; then
-		echo "---===`date`===--- attempting to renewing now"
-		until $certbotcommand ; do
-			echo "---===`date`===--- Something went wrong renewing the cert. Trying tomorrow"
-			sleep 86400
-		done	
+		# echo "---===`date`===--- attempting to renewing now"
+		# until $certbotcommand ; do
+		# 	echo "---===`date`===--- Something went wrong renewing the cert. Trying tomorrow"
+		# 	sleep 86400
+		# done	
 
 		echo "---===`date`===--- applying cert to K8s secret store"
 		until $k8sapply ; do
