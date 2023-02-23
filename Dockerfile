@@ -1,6 +1,8 @@
 FROM debian:buster
 LABEL maintainer="Lon Kaut <lonkaut@gmail.com>"
 
+COPY check_cert_expire.sh / 
+
 ENV LANG C.UTF-8
 RUN  \
   apt-get update \
@@ -10,8 +12,11 @@ RUN  \
   && curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl" \
   && install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl \
   && apt-get clean \
-  && mkdir /tmp/log
+  && chmod a+rx /check_cert_expire.sh \
+  && RUN useradd -Um -u 1000 -d /home/certbot -s /bin/bash certbot \
+  && echo "alias k=kubectl" >> /home/certbot/.bashrc
 
-COPY check_cert_expire.sh / 
+USER certbot
+WORKDIR /home/certbot/
 
 CMD ["/check_cert_expire.sh"]
