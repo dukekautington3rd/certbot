@@ -13,7 +13,7 @@ RUN  \
   && install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl \
   && apt-get clean \
   && chmod a+rx /check_cert_expire.sh \
-  && RUN useradd -Um -u 1000 -d /home/certbot -s /bin/bash certbot \
+  && useradd -Um -u 1000 -d /home/certbot -s /bin/bash certbot \
   && echo "alias k=kubectl" >> /home/certbot/.bashrc
 
 USER certbot
