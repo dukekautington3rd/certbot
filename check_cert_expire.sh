@@ -30,7 +30,7 @@ check_cert () {
 		return 0
 	else
 		echo "---===`date`===--- no renewal needed"
-		return 1
+		return 0
 	fi
 }
 
