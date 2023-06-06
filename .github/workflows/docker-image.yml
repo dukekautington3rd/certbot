@@ -8,7 +8,7 @@ on:
 
 env:
   REPO: ${{ github.event.repository.name }}
-  BUILD_ID: 
+  BUILD_ID: ${{ steps.buildID.outputs.BUILD_ID }}
   DOCKER_USERNAME: ${{ vars.DOCKERHUB_USERNAME }}
   DOCKER_TOKEN: ${{ secrets.DOCKERHUB_ACCESS_TOKEN }}
   PRISMA_USERNAME: ${{ secrets.PCC_USER }}
@@ -51,7 +51,10 @@ jobs:
     #     download_external_modules: true # optional: download external terraform modules from public git repositories and terraform registry
     #     #log_level: DEBUG # optional: set log level. Default WARNING
     - name: Assign build number
-      run: echo "BUILD_ID=$(date +'%y-%m-%d')" >> $GITHUB_ENV
+      id: buildID
+      run: "::set-output name=BUILD_ID::$(date +'%y-%m-%d')" 
+    # - name: Assign build number
+    #   run: echo "BUILD_ID=$(date +'%y-%m-%d')" >> $GITHUB_ENV
     - name: Build the Docker image
       # run: docker build -t "$DOCKER_USERNAME/$REPO:$(date +%y_%m_%d)" -t "$DOCKER_USERNAME/$REPO:latest" .
       run: docker build -t "$DOCKER_USERNAME/$REPO:$BUILD_ID" -t "$DOCKER_USERNAME/$REPO:latest" .
