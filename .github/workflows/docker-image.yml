@@ -51,7 +51,7 @@ jobs:
     #     #log_level: DEBUG # optional: set log level. Default WARNING
     - name: Assign build number
       run: |
-        echo "BUILD_ID=$(date +'%y-%m-%d')" >> $GITHUB_ENV
+        echo "BUILD_ID=$(date +'%y_%m_%d')" >> $GITHUB_ENV
     - name: Build the Docker image
       # run: docker build -t "$DOCKER_USERNAME/$REPO:$(date +%y_%m_%d)" -t "$DOCKER_USERNAME/$REPO:latest" .
       run: docker build -t "$DOCKER_USERNAME/$REPO:$BUILD_ID" -t "$DOCKER_USERNAME/$REPO:latest" .
