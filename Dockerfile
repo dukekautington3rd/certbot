@@ -1,4 +1,4 @@
-FROM debian:buster
+FROM debian:bookworm
 LABEL maintainer="Lon Kaut <lonkaut@gmail.com>"
 
 COPY check_cert_expire.sh / 
