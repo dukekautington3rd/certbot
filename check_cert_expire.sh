@@ -10,8 +10,8 @@ if $TEST ; then
 fi
 
 check_cert () {
-	# kubectl get secret $CERTNAME -o "jsonpath={.data['tls\.crt']}" | base64 -d | openssl x509 -checkend $RENEWBEFORE -noout 
-	kubectl get secret $CERTNAME -o "jsonpath={.data['tls\.crt']}" | base64 -d | openssl verify -
+	kubectl get secret $CERTNAME -o "jsonpath={.data['tls\.crt']}" | base64 -d | openssl x509 -checkend $RENEWBEFORE -noout 
+	# kubectl get secret $CERTNAME -o "jsonpath={.data['tls\.crt']}" | base64 -d | openssl verify -
 	if [ $? -eq 1 ] ; then
 		echo "---===`date`===--- attempting to renewing now"
 		until $certbotcommand ; do
